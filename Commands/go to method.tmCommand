@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/bin/sh
+FUNC="$TM_CURRENT_WORD"
+DIR="$TM_PROJECT_DIRECTORY"
+OUTPUT=''
+
+FILES=(`find "$DIR" -type f`)	
+
+#
+# Look for a function declaration within a files contents.
+#
+# &lt;file&gt; &lt;function&gt;
+#
+function lookup_function {
+  local line=`nl -b a "$1" | grep 'function '"$2"'(' | awk '{print $1}'`
+  if [[ "$line" -gt 0 ]]; then
+    mate "$1" -l "$line"
+    exit 0
+  fi
+}
+
+# Iterate files
+for (( i=0; i &lt; ${#FILES[*]}; i++)); do
+  file="${FILES[${i}]}"
+  lookup_function "$file" "$FUNC"
+done
+
+# Nothing found
+echo 'Function '${FUNC}' was not found within the current project.'</string>
+	<key>fallbackInput</key>
+	<string>word</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>~m</string>
+	<key>name</key>
+	<string>Go to method definition...</string>
+	<key>output</key>
+	<string>showAsTooltip</string>
+	<key>uuid</key>
+	<string>9F1A7C20-99AC-4325-BA6E-53E8076ABD9F</string>
+</dict>
+</plist>
